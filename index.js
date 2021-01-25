@@ -1,0 +1,38 @@
+const express = require("express");
+const MongoClient = require("mongodb").MongoClient;
+const app = express();
+/* const bcrypt = require("bcrypt");
+const cifrarContrasenia = require("./cifrarContrasenia") */
+const cors = require("cors")
+
+
+let peliculas = require("./peliculas")
+
+
+app.use(cors());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json())
+
+let db;
+
+MongoClient.connect("mongodb+srv://djarauta:dj18dj18@cluster0.v04vd.mongodb.net/dj-commerce?retryWrites=true&w=majority", function(err, client) {
+    if (err !== null) {
+        console.log(err);
+    } else {
+        app.locals.db = client.db("DJ-commerce");
+    }
+});
+
+app.use((req,res,next) => {
+    res.setHeader("Access-Control-Allow-Origin", "+");
+    res.header(
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested-With, Content-Type, Accept"
+    );
+    next();  
+});
+
+app.use("/peliculas", peliculas)
+
+app.listen(process.env.PORT || 3000);
+/* app.listen(3000); */
