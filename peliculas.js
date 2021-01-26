@@ -18,41 +18,14 @@ router.post("/visualizado", function(req, res) {
     let cartel = req.body.cartel
     let id = req.body.id
     let visualizaciones
-
- /*    db.collection("visualizados").find({id:id}).toArray(function(err,datos) {
-        if (err !== null) {
-            db.collection("visualizados").insertOne({titulo:titulo,cartel:cartel,id:id, visualizado: 1},function(err,datos) {
-                if (err !== null) {
-                    res.send({mensaje: "Error al crear visualización de película"})
-                } else {
-                    res.send({creado: "si", mensaje: "Creado visualización de película"})
-                }
-            })
-        } else {
-            db.collection("visualizados").find({id:id}).toArray(function(err,datos) {
-                if (err !== null) {
-                    res.send({mensaje: "Error al encontrar película en visualizados"})
-                } else {
-                    visualizaciones = datos.visualizado + 1
-                    db.collection("visualizados").updateOne({id:id},{$set: {visualizado: visualizaciones}},function(err,datos){
-                        if (err !== null) {
-                            res.send({mensaje:"Error al actualizar visualizados"})
-                        } else {
-                            res.send({mensaje: "Actualizado visualización"})
-                        }
-                    })
-                }
-            })
-        }
-    })  */
-    
-    
+ 
     db.collection("visualizados").find({id:id}).toArray(function(err,datos) {
         if (err !== null) {
             res.send("Error:" + err)
         } else {
             if (datos.length > 0) {
-                visualizaciones = datos.visualizado + 1
+                visualizaciones = 0
+                visualizaciones = parseInt(datos[0].visualizado) + 1
                 db.collection("visualizados").updateOne({id:id},{$set: {visualizado: visualizaciones}},function(err,datos){
                     if (err !== null) {
                         res.send({mensaje:"Error al actualizar visualizados"})
@@ -73,7 +46,7 @@ router.post("/visualizado", function(req, res) {
     })     
 })
 
-router.put("/favoritas", function(req, res) {
+router.post("/favoritas", function(req, res) {
     let db = req.app.locals.db
 
     let titulo = req.body.titulo
@@ -86,7 +59,8 @@ router.put("/favoritas", function(req, res) {
             res.send("Error:" + err)
         } else {
             if (datos.length > 0) {
-                elegidas = datos.favoritas + 1
+                elegidas = 0
+                elegidas = parseInt(datos[0].favoritas) + 1
                 db.collection("favoritas").updateOne({id:id},{$set: {favoritas: elegidas}},function(err,datos){
                     if (err !== null) {
                         res.send({mensaje:"Error al actualizar favoritas"})
@@ -121,7 +95,8 @@ router.post("/cesta", function(req, res) {
             res.send("Error:" + err)
         } else {
             if (datos.length > 0) {
-                enCesta = datos.cesta + 1
+                enCesta = 0
+                enCesta = parseInt(datos[0].cesta) + 1
                 db.collection("cesta").updateOne({id:id},{$set: {cesta: enCesta}},function(err,datos){
                     if (err !== null) {
                         res.send({mensaje:"Error al actualizar compradas"})
