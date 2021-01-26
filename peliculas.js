@@ -64,7 +64,7 @@ router.post("/visualizado", function(req, res) {
     })     
 })
 
-router.post("/favoritas", function(req, res) {
+router.put("/favoritas", function(req, res) {
     let db = req.app.locals.db
 
     let titulo = req.body.titulo
