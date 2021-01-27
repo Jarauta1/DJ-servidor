@@ -1,13 +1,13 @@
 const express = require("express");
 const MongoClient = require("mongodb").MongoClient;
 const app = express();
-/* const bcrypt = require("bcrypt");
-const cifrarContrasenia = require("./cifrarContrasenia") */
+const bcrypt = require("bcrypt");
+const cifrarContrasenia = require("./cifrarContrasenia")
 const cors = require("cors")
 
 
 let peliculas = require("./peliculas")
-
+let usuarios = require("./usuarios")
 
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
@@ -33,6 +33,7 @@ app.use((req,res,next) => {
 });
 
 app.use("/peliculas", peliculas)
+app.use("/usuarios", usuarios)
 
 app.listen(process.env.PORT || 3000);
 /* app.listen(3000); */
