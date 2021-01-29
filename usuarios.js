@@ -33,7 +33,7 @@ router.post("/registro", cifrarContrasenia, function(req, res) {
             if (datos.length > 0) {
                 res.send({registro: "no", mensaje: "Ese mail ya ha sido utilizado"})
             } else {
-                db.collection("usuarios").insertOne({ usuario: nombre, apellido1: apellido1, apellido2: apellido2, anyo: anyo, mes: mes, dia: dia, mail: mail, password: password }), function(err, datos) {
+                db.collection("usuarios").insertOne({ usuario: nombre, apellido1: apellido1, apellido2: apellido2, anyo: anyo, mes: mes, dia: dia, mail: mail, password: password, cesta: [], favoritos: [], compras: [] }), function(err, datos) {
                     if (err !== null) {
                         console.log(err)
                         res.send({ mensaje: "Error al registrar el usuario" })
@@ -63,7 +63,7 @@ router.post("/login", function(req, res) {
 
             if (arrayUsuario.length > 0) {
                 if (bcrypt.compareSync(password, arrayUsuario[0].password)) {
-                    res.send({ entrar: "si", mensaje: "Logueado correctamente" });
+                    res.send({ entrar: "si", mensaje: "Logueado correctamente", usuario: mail });
                 } else {
                     res.send({ entrar: "no", mensaje: "Contraseña incorrecta" });
                 }
@@ -74,6 +74,43 @@ router.post("/login", function(req, res) {
     });
 });
 
+router.put("/favoritos", function(req, res) {
+    let db = req.app.locals.db
 
+    let mail = req.body.usuario
+    let titulo = req.body.titulo
+    let cartel = req.body.cartel
+    let id = req.body.id
+   
+
+    db.collection("usuarios").find({ mail: mail }).toArray(function(err, datos) {
+        if (err !== null) {
+            console.log(err)
+            res.send({ mensaje: "Error:" + err })
+        } else {
+            if (datos.length > 0) {
+                db.collection("usuarios").updateOne({ mail: mail }, { $push: { favoritos: { $each: [{ titulo: titulo, cartel: cartel, id: id}], $position: 0 } } }, function(err, datos) {
+                    if (err !== null) {
+                        console.log(err)
+                        res.send({ mensaje: "Error:" + err })
+                    } else {
+                        res.send({mensaje: "Película añadida a favoritos"})
+                        
+                    }
+                })
+            } else {
+                res.send({mensaje: "Usuario no encontrado"})
+            }
+            
+                }
+                    
+    })
+
+    
+
+
+
+
+})
 
 module.exports = router;
