@@ -33,13 +33,13 @@ router.post("/registro", cifrarContrasenia, function(req, res) {
             if (datos.length > 0) {
                 res.send({registro: "no", mensaje: "Ese mail ya ha sido utilizado"})
             } else {
-                db.collection("usuarios").insertOne({ usuario: nombre, apellido1: apellido1, apellido2: apellido2, anyo: anyo, mes: mes, dia: dia, mail: mail, password: password, cesta: [], favoritos: [], compras: [] }), function(err, datos) {
+                db.collection("usuarios").insertOne({ usuario: nombre, apellido1: apellido1, apellido2: apellido2, anyo: anyo, mes: mes, dia: dia, mail: mail, password: password, rango: "usuario", cesta: [], favoritos: [], compras: [] }), function(err, datos) {
                     if (err !== null) {
                         console.log(err)
                         res.send({ mensaje: "Error al registrar el usuario" })
                     } else {
             
-                       res.send({mensaje: "Usuario registrado correctamente"})
+                       res.send({mensaje: "Usuario registrado correctamente", usuario: mail})
             
                     }
                 }

@@ -8,6 +8,7 @@ const cors = require("cors")
 
 let peliculas = require("./peliculas")
 let usuarios = require("./usuarios")
+let productos = require("./productos.js")
 
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
@@ -34,6 +35,7 @@ app.use((req,res,next) => {
 
 app.use("/peliculas", peliculas)
 app.use("/usuarios", usuarios)
+app.use("/productos", productos)
 
 app.listen(process.env.PORT || 3000);
 /* app.listen(3000); */
