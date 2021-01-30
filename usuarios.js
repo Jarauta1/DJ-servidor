@@ -74,7 +74,7 @@ router.post("/login", function(req, res) {
     });
 });
 
-router.put("/favoritos", function(req, res) {
+router.post("/favoritos", function(req, res) {
     let db = req.app.locals.db
 
     let mail = req.body.usuario
@@ -106,11 +106,54 @@ router.put("/favoritos", function(req, res) {
                     
     })
 
-    
+})
 
+router.post("/cesta", function(req, res) {
+    let db = req.app.locals.db
 
+    let mail = req.body.usuario
+    let titulo = req.body.titulo
+    let cartel = req.body.cartel
+    let id = req.body.id
+   
 
+    db.collection("usuarios").find({ mail: mail }).toArray(function(err, datos) {
+        if (err !== null) {
+            console.log(err)
+            res.send({ mensaje: "Error:" + err })
+        } else {
+            if (datos.length > 0) {
+                db.collection("usuarios").updateOne({ mail: mail }, { $push: { cesta: { $each: [{ titulo: titulo, cartel: cartel, id: id}], $position: 0 } } }, function(err, datos) {
+                    if (err !== null) {
+                        console.log(err)
+                        res.send({ mensaje: "Error:" + err })
+                    } else {
+                        res.send({mensaje: "Película añadida a la cesta"})
+                        
+                    }
+                })
+            } else {
+                res.send({mensaje: "Usuario no encontrado"})
+            }
+            
+                }
+                    
+    })
 
 })
+
+router.post("/", function(req, res) {
+    let db = req.app.locals.db
+
+    let usuario = req.body.usuario
+
+   db.collection("usuarios").find({mail: usuario}).toArray(function(err, datos) {
+        if (err !== null) {
+            res.send({ mensaje: "Ha habido un error" });
+        } else {
+            res.send({datos})
+        }
+    });
+});
 
 module.exports = router;

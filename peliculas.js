@@ -17,16 +17,20 @@ router.post("/visualizado", function(req, res) {
     let titulo = req.body.titulo
     let cartel = req.body.cartel
     let id = req.body.id
+    let edad = req.body.edad
     let visualizaciones
- 
+    let edadMedia
+
     db.collection("visualizados").find({id:id}).toArray(function(err,datos) {
         if (err !== null) {
             res.send("Error:" + err)
         } else {
             if (datos.length > 0) {
+                edadMedia = 0
+                edadMedia = parseInt(datos[0].edadMedia) + edad
                 visualizaciones = 0
                 visualizaciones = parseInt(datos[0].visualizado) + 1
-                db.collection("visualizados").updateOne({id:id},{$set: {visualizado: visualizaciones}},function(err,datos){
+                db.collection("visualizados").updateOne({id:id},{$set: {visualizado: visualizaciones, edadMedia: edadMedia}},function(err,datos){
                     if (err !== null) {
                         res.send({mensaje:"Error al actualizar visualizados"})
                     } else {
@@ -34,7 +38,7 @@ router.post("/visualizado", function(req, res) {
                     }
                 })
             } else {
-                db.collection("visualizados").insertOne({titulo:titulo,cartel:cartel,id:id, visualizado: 1},function(err,datos) {
+                db.collection("visualizados").insertOne({titulo:titulo,cartel:cartel,id:id, visualizado: 1, edadMedia: edad},function(err,datos) {
                     if (err !== null) {
                         res.send({mensaje: "Error al crear visualización de película"})
                     } else {
@@ -52,6 +56,7 @@ router.post("/favoritas", function(req, res) {
     let titulo = req.body.titulo
     let cartel = req.body.cartel
     let id = req.body.id
+    let edad = req.body.edad
     let elegidas
     
     db.collection("favoritas").find({id:id}).toArray(function(err,datos) {
@@ -59,9 +64,11 @@ router.post("/favoritas", function(req, res) {
             res.send("Error:" + err)
         } else {
             if (datos.length > 0) {
+                edadMedia = 0
+                edadMedia = parseInt(datos[0].edadMedia) + edad
                 elegidas = 0
                 elegidas = parseInt(datos[0].favoritas) + 1
-                db.collection("favoritas").updateOne({id:id},{$set: {favoritas: elegidas}},function(err,datos){
+                db.collection("favoritas").updateOne({id:id},{$set: {favoritas: elegidas, edadMedia: edadMedia}},function(err,datos){
                     if (err !== null) {
                         res.send({mensaje:"Error al actualizar favoritas"})
                     } else {
@@ -69,7 +76,7 @@ router.post("/favoritas", function(req, res) {
                     }
                 })
             } else {
-                db.collection("favoritas").insertOne({titulo:titulo,cartel:cartel,id:id, favoritas: 1},function(err,datos) {
+                db.collection("favoritas").insertOne({titulo:titulo,cartel:cartel,id:id, edadMedia: edad, favoritas: 1},function(err,datos) {
                     if (err !== null) {
                         res.send({mensaje: "Error al crear favoritos de película"})
                     } else {
@@ -87,17 +94,19 @@ router.post("/cesta", function(req, res) {
     let titulo = req.body.titulo
     let cartel = req.body.cartel
     let id = req.body.id
-    let descargas = req.body.descargas
+    let edad = req.body.edad
     let enCesta
-    
+   
     db.collection("cesta").find({id:id}).toArray(function(err,datos) {
         if (err !== null) {
             res.send("Error:" + err)
         } else {
             if (datos.length > 0) {
+                edadMedia = 0
+                edadMedia = parseInt(datos[0].edadMedia) + edad
                 enCesta = 0
                 enCesta = parseInt(datos[0].cesta) + 1
-                db.collection("cesta").updateOne({id:id},{$set: {cesta: enCesta}},function(err,datos){
+                db.collection("cesta").updateOne({id:id},{$set: {cesta: enCesta, edadMedia: edadMedia}},function(err,datos){
                     if (err !== null) {
                         res.send({mensaje:"Error al actualizar compradas"})
                     } else {
@@ -105,11 +114,12 @@ router.post("/cesta", function(req, res) {
                     }
                 })
             } else {
-                db.collection("cesta").insertOne({titulo:titulo,cartel:cartel,id:id, cesta: descargas},function(err,datos) {
+                db.collection("cesta").insertOne({titulo:titulo,cartel:cartel, edadMedia: edad, id:id, cesta: 1},function(err,datos) {
                     if (err !== null) {
                         res.send({mensaje: "Error al crear compradas de película"})
                     } else {
                         res.send({creado: "si", mensaje: "Creado la compra de película"})
+                        
                     }
                 })
             }   
