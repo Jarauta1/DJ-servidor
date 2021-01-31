@@ -142,7 +142,7 @@ router.post("/cesta", function(req, res) {
         } else {
             if (datos.length > 0) {
                 
-                db.collection("usuarios").updateOne({ mail: mail}, { $push: { cesta: { $each: [{ titulo: titulo, cartel: cartel, id: id,precio:precio,producto:producto, cantidad:1}], $position: 0 } } }, function(err, datos) {
+                db.collection("usuarios").updateOne({ mail: mail}, { $push: { cesta: { $each: [{ titulo: titulo, cesta:"cesta",cartel: cartel, id: id,precio:precio,producto:producto, cantidad:1}], $position: 0 } } }, function(err, datos) {
                     if (err !== null) {
                         console.log(err)
                         res.send({ mensaje: "Error:" + err })
@@ -171,6 +171,79 @@ router.post("/", function(req, res) {
             res.send({ mensaje: "Ha habido un error" });
         } else {
             res.send({datos})
+        }
+    });
+});
+
+let cesta
+
+router.post("/visualizarCesta", function(req, res) {
+    let db = req.app.locals.db
+
+    let usuario = req.body.usuario
+
+   db.collection("usuarios").find({mail: usuario}).toArray(function(err, datos) {
+        if (err !== null) {
+            res.send({ mensaje: "Ha habido un error" });
+        } else {
+            let suma = 0
+
+            cesta = datos[0].cesta
+            console.log(cesta)
+
+            for (let i = 0; i < cesta.length; i++) {
+                suma = suma + cesta[i].precio
+            }
+
+            res.send({datos:datos,total:suma})
+        }
+    });
+});
+
+router.post("/compras", function(req, res) {
+    let db = req.app.locals.db
+
+    let mail = req.body.usuario
+    let borrar
+
+   db.collection("usuarios").find({mail: mail}).toArray(function(err, datos) {
+        if (err !== null) {
+            res.send({ mensaje: "Ha habido un error" });
+        } else {
+            cesta=datos[0].cesta
+            db.collection("usuarios").updateOne({ mail: mail}, { $push: { compras: { $each: [{ compra: cesta}], $position: 0 } } }, function(err, datos) {
+                if (err !== null) {
+                    console.log(err)
+                    res.send({ mensaje: "Error:" + err })
+                } else {
+                    
+                    db.collection("usuarios").find({mail:mail}).toArray(function(err,datos){
+                        if (err !== null){
+                            console.log(err)
+                            res.send({mensaje: "Error: "+ err})
+                        } else {
+                            let longitud = 0
+                            borrar= datos[0].cesta
+                            longitud = borrar.length
+
+                            for (let i = 0; i < longitud; i++) {
+                                db.collection("usuarios").update({mail:mail},{$pop:{cesta:-1}}),function(err,datos) {
+                                    if (err !== null) {
+                                        console.log(err)
+                                        res.send({mensaje: "Error: " + err})
+                                    } else {
+                                        res.send({mensaje: "Compra realizada"})
+                                    }
+                                }
+                            }
+                        }
+                    })
+
+                    
+
+                }
+            })
+
         }
     });
 });
