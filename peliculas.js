@@ -98,6 +98,7 @@ router.post("/cesta", function(req, res) {
     let id = req.body.id
     let edad = req.body.edad
     let producto = req.body.producto
+    let precio = req.body.precio
     
     let enCesta
    
@@ -118,7 +119,7 @@ router.post("/cesta", function(req, res) {
                     }
                 })
             } else {
-                db.collection("cesta").insertOne({titulo:titulo,cartel:cartel, edadMedia: edad, id:id, cesta: 1, producto: producto},function(err,datos) {
+                db.collection("cesta").insertOne({titulo:titulo,cartel:cartel, edadMedia: edad, id:id, precio:precio,cesta: 1, producto: producto},function(err,datos) {
                     if (err !== null) {
                         res.send({mensaje: "Error al crear compradas de película"})
                     } else {
