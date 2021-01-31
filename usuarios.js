@@ -133,6 +133,7 @@ router.post("/cesta", function(req, res) {
     let precio = req.body.precio
     let producto = req.body.producto
     let id = req.body.id
+    let cantidad
    
 
     db.collection("usuarios").find({ mail: mail }).toArray(function(err, datos) {
@@ -141,7 +142,32 @@ router.post("/cesta", function(req, res) {
             res.send({ mensaje: "Error:" + err })
         } else {
             if (datos.length > 0) {
-                db.collection("usuarios").updateOne({ mail: mail }, { $push: { cesta: { $each: [{ titulo: titulo, cartel: cartel, id: id,precio:precio,producto:producto}], $position: 0 } } }, function(err, datos) {
+                let cesta = datos[0].cesta
+                let igual = "falso"
+                let j
+                console.log("inicio",cantidad)
+                if (cesta.length > 0) {
+                    for (j = 0; j < cesta.length; j++) {
+                        if (cesta[j].id == id) {
+                            igual = "verdadero"
+                            cantidad = cesta[j].cantidad
+                            console.log("cogido",cantidad)
+                        } else {
+                            cantidad = 0
+                            console.log("valor inicial",cantidad)
+
+                        }
+                    }
+                } else {
+                    cantidad = 0
+                    console.log("sin cesta", cantidad)
+                }
+                cantidad = cantidad + 1
+                console.log("suma",cantidad)
+                    
+               
+
+                db.collection("usuarios").updateOne({ mail: mail }, { $push: { cesta: { $each: [{ titulo: titulo, cartel: cartel, id: id,precio:precio,producto:producto, cantidad:cantidad}], $position: 0 } } }, function(err, datos) {
                     if (err !== null) {
                         console.log(err)
                         res.send({ mensaje: "Error:" + err })

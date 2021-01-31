@@ -22,7 +22,7 @@ router.post("/visualizado", function(req, res) {
     let edad = req.body.edad
     let visualizaciones
     let edadMedia
-
+console.log(titulo,cartel,producto,precio,id,edad)
     db.collection("visualizados").find({id:id}).toArray(function(err,datos) {
         if (err !== null) {
             res.send("Error:" + err)
