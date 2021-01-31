@@ -80,6 +80,8 @@ router.post("/favoritos", function(req, res) {
     let mail = req.body.usuario
     let titulo = req.body.titulo
     let cartel = req.body.cartel
+    let precio = req.body.precio
+    let producto = req.body.producto
     let id = req.body.id
    
 
@@ -89,15 +91,29 @@ router.post("/favoritos", function(req, res) {
             res.send({ mensaje: "Error:" + err })
         } else {
             if (datos.length > 0) {
-                db.collection("usuarios").updateOne({ mail: mail }, { $push: { favoritos: { $each: [{ titulo: titulo, cartel: cartel, id: id}], $position: 0 } } }, function(err, datos) {
-                    if (err !== null) {
-                        console.log(err)
-                        res.send({ mensaje: "Error:" + err })
-                    } else {
-                        res.send({mensaje: "Película añadida a favoritos"})
-                        
+                let favoritos = datos[0].favoritos
+                let igual = false
+
+                for (let i = 0; i < favoritos.length; i++) {
+                    if (favoritos[i].titulo == titulo) {
+                        igual = true
                     }
-                })
+                }
+
+                if (igual) {
+                    res.send({mensaje: "Ya estaba en tus favoritos"})
+                } else {
+                    db.collection("usuarios").updateOne({ mail: mail }, { $push: { favoritos: { $each: [{ titulo: titulo, cartel: cartel, id: id,precio:precio, producto:producto,seccion: "favoritos"}], $position: 0 } } }, function(err, datos) {
+                        if (err !== null) {
+                            console.log(err)
+                            res.send({ mensaje: "Error:" + err })
+                        } else {
+                            res.send({mensaje: "Película añadida a favoritos"})
+                            
+                        }
+                    })
+                }
+                
             } else {
                 res.send({mensaje: "Usuario no encontrado"})
             }
@@ -114,6 +130,8 @@ router.post("/cesta", function(req, res) {
     let mail = req.body.usuario
     let titulo = req.body.titulo
     let cartel = req.body.cartel
+    let precio = req.body.precio
+    let producto = req.body.producto
     let id = req.body.id
    
 
@@ -123,7 +141,7 @@ router.post("/cesta", function(req, res) {
             res.send({ mensaje: "Error:" + err })
         } else {
             if (datos.length > 0) {
-                db.collection("usuarios").updateOne({ mail: mail }, { $push: { cesta: { $each: [{ titulo: titulo, cartel: cartel, id: id}], $position: 0 } } }, function(err, datos) {
+                db.collection("usuarios").updateOne({ mail: mail }, { $push: { cesta: { $each: [{ titulo: titulo, cartel: cartel, id: id,precio:precio,producto:producto}], $position: 0 } } }, function(err, datos) {
                     if (err !== null) {
                         console.log(err)
                         res.send({ mensaje: "Error:" + err })

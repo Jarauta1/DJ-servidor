@@ -16,9 +16,10 @@ router.post("/visualizado", function(req, res) {
 
     let titulo = req.body.titulo
     let cartel = req.body.cartel
+    let producto = req.body.producto
+    let precio = req.body.precio
     let id = req.body.id
     let edad = req.body.edad
-    let producto = req.body.producto
     let visualizaciones
     let edadMedia
 
@@ -39,11 +40,11 @@ router.post("/visualizado", function(req, res) {
                     }
                 })
             } else {
-                db.collection("visualizados").insertOne({titulo:titulo,cartel:cartel,id:id, visualizado: 1, edadMedia: edad, producto: producto},function(err,datos) {
+                db.collection("visualizados").insertOne({titulo:titulo,cartel:cartel,precio:precio,id:id, visualizado: 1, edadMedia: edad, producto: producto},function(err,datos) {
                     if (err !== null) {
-                        res.send({mensaje: "Error al crear visualización de película"})
+                        res.send({mensaje: "Error al crear visualización del comic"})
                     } else {
-                        res.send({creado: "si", mensaje: "Creado visualización de película"})
+                        res.send({creado: "si", mensaje: "Creado visualización del comic"})
                     }
                 })
             }   
@@ -56,9 +57,10 @@ router.post("/favoritas", function(req, res) {
 
     let titulo = req.body.titulo
     let cartel = req.body.cartel
+    let producto = req.body.producto
+    let precio = req.body.precio
     let id = req.body.id
     let edad = req.body.edad
-    let producto = req.body.producto
     let elegidas
     
     db.collection("favoritas").find({id:id}).toArray(function(err,datos) {
@@ -78,11 +80,11 @@ router.post("/favoritas", function(req, res) {
                     }
                 })
             } else {
-                db.collection("favoritas").insertOne({titulo:titulo,cartel:cartel,id:id, edadMedia: edad, favoritas: 1, producto: producto},function(err,datos) {
+                db.collection("favoritas").insertOne({titulo:titulo,cartel:cartel,precio:precio,id:id, edadMedia: edad, favoritas: 1, producto: producto},function(err,datos) {
                     if (err !== null) {
-                        res.send({mensaje: "Error al crear favoritos de película"})
+                        res.send({mensaje: "Error al crear favoritos del comic"})
                     } else {
-                        res.send({creado: "si", mensaje: "Creado el favorito de película"})
+                        res.send({creado: "si", mensaje: "Creado el favorito del comic"})
                     }
                 })
             }   
@@ -95,9 +97,10 @@ router.post("/cesta", function(req, res) {
 
     let titulo = req.body.titulo
     let cartel = req.body.cartel
+    let producto = req.body.producto
+    let precio = req.body.precio
     let id = req.body.id
     let edad = req.body.edad
-    let producto = req.body.producto
     
     let enCesta
    
@@ -118,11 +121,11 @@ router.post("/cesta", function(req, res) {
                     }
                 })
             } else {
-                db.collection("cesta").insertOne({titulo:titulo,cartel:cartel, edadMedia: edad, id:id, cesta: 1, producto: producto},function(err,datos) {
+                db.collection("cesta").insertOne({titulo:titulo,cartel:cartel, edadMedia: edad, id:id,precio:precio, cesta: 1, producto: producto},function(err,datos) {
                     if (err !== null) {
-                        res.send({mensaje: "Error al crear compradas de película"})
+                        res.send({mensaje: "Error al crear compradas del comic"})
                     } else {
-                        res.send({creado: "si", mensaje: "Creado la compra de película"})
+                        res.send({creado: "si", mensaje: "Creado la compra del comic"})
                         
                     }
                 })
