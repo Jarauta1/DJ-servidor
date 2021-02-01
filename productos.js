@@ -67,7 +67,7 @@ router.post("/camisetas", function(req, res) {
     })     
 })
 
-router.post("/zapatillas/id", function(req, res) {
+router.post("/camisetas/id", function(req, res) {
     let db = req.app.locals.db
 
     let id = req.body.id

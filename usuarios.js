@@ -227,12 +227,18 @@ router.post("/compras", function(req, res) {
                             longitud = borrar.length
 
                             for (let i = 0; i < longitud; i++) {
-                                db.collection("usuarios").update({mail:mail},{$pop:{cesta:-1}}),function(err,datos) {
+                                db.collection("usuarios").updateOne({mail:mail},{$pop:{cesta:-1}}),function(err,datos) {
                                     if (err !== null) {
                                         console.log(err)
                                         res.send({mensaje: "Error: " + err})
                                     } else {
-                                        res.send({mensaje: "Compra realizada"})
+                                        db.collection("usuarios").find({mail: mail}).toArray(function(err, datos) {
+                                            if (err !== null) {
+                                                res.send({ mensaje: "Ha habido un error" });
+                                            } else {
+                                                res.send(datos)
+                                            }
+                                        })
                                     }
                                 }
                             }
@@ -243,6 +249,65 @@ router.post("/compras", function(req, res) {
 
                 }
             })
+
+        }
+    });
+});
+
+router.post("/compras/eliminar", function(req, res) {
+    let db = req.app.locals.db
+
+    let mail = req.body.usuario
+    let id = req.body.id
+    let indice = 0
+    let borrar
+
+   db.collection("usuarios").find({mail: mail}).toArray(function(err, datos) {
+        if (err !== null) {
+            res.send({ mensaje: "Ha habido un error" });
+        } else {
+            cesta=datos[0].cesta
+           console.log(cesta)
+
+           for (let i = 0; i < cesta.length; i++) {
+               if (cesta[i].id === id) {
+                   indice = i
+               }
+           }
+
+           cesta.splice(indice,indice+1)
+
+            for (let i = 0; i < cesta.length; i++) {
+                db.collection("usuarios").updateOne({mail:mail},{$pop:{cesta:-1}}),function(err,datos) {
+                    if (err !== null) {
+                        console.log(err)
+                        res.send({mensaje: "Error: " + err})
+                    } else {
+                        
+                        for (let i = 0; i < cesta.length; i++) {
+                            db.collection("usuarios").updateOne({ mail: mail}, { $push: { cesta: { $each: [{ titulo: cesta[i].titulo, cesta:"cesta",cartel: cesta[i].cartel, id: cesta[i].id,precio:cesta[i].precio,producto:cesta[i].producto, cantidad:cesta[i].cantidad}], $position: 0 } } }, function(err, datos) {
+                                if (err !== null) {
+                                    console.log(err)
+                                    res.send({ mensaje: "Error:" + err })
+                                } else {
+                                    db.collection("usuarios").find({mail: mail}).toArray(function(err, datos) {
+                                        if (err !== null) {
+                                            res.send({ mensaje: "Ha habido un error" });
+                                        } else {
+                                            res.send({mensaje: "Articulo eliminado de la lista",datos:datos})
+                                        }
+                                    })
+                                   
+                                    
+                                }
+                            })
+                        } 
+                       
+
+
+                    }
+                }
+            }
 
         }
     });
