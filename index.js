@@ -10,6 +10,9 @@ let peliculas = require("./peliculas")
 let usuarios = require("./usuarios")
 let productos = require("./productos.js")
 let comics = require("./comics")
+let camisetas = require("./camisetas")
+let zapatillas = require("./zapatillas")
+let libros = require("./libros")
 
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
@@ -38,6 +41,9 @@ app.use("/peliculas", peliculas)
 app.use("/usuarios", usuarios)
 app.use("/productos", productos)
 app.use("/comics", comics)
+app.use("/camisetas", camisetas)
+app.use("/zapatillas", zapatillas)
+app.use("/libros", libros)
 
 app.listen(process.env.PORT || 3000);
 /* app.listen(3000); */
