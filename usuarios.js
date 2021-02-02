@@ -225,22 +225,20 @@ router.post("/compras", function(req, res) {
                             borrar= datos[0].cesta
                             longitud = borrar.length
 
-                            for (let i = 0; i < longitud; i++) {
-                                db.collection("usuarios").updateOne({mail:mail},{$pop:{cesta:-1}}),function(err,datos) {
-                                    if (err !== null) {
-                                        console.log(err)
-                                        res.send({mensaje: "Error: " + err})
-                                    } else {
-                                        db.collection("usuarios").find({mail: mail}).toArray(function(err, datos) {
-                                            if (err !== null) {
-                                                res.send({ mensaje: "Ha habido un error" });
-                                            } else {
-                                                res.send(datos)
-                                            }
-                                        })
-                                    }
+                            db.collection("usuarios").updateOne({ mail: mail }, { $set: { cesta: [] } }, function(err, datos) {
+                                if (err !== null) {
+                                    console.log(err)
+                                    res.send({ mensaje: "Error:" + err })
+                                } else {
+                                    db.collection("usuarios").find({mail: mail}).toArray(function(err, datos) {
+                                        if (err !== null) {
+                                            res.send({ mensaje: "Ha habido un error" });
+                                        } else {
+                                            res.send(datos)
+                                        }
+                                    })
                                 }
-                            }
+                            })
                         }
                     })
 
@@ -267,7 +265,7 @@ router.post("/compras/eliminar", function(req, res) {
         if (err !== null) {
             res.send({ mensaje: "Ha habido un error" });
         } else {
-            arrayCesta=datos[0].cesta
+            arrayCesta = datos[0].cesta
             longitud = arrayCesta.length
            
 
@@ -278,45 +276,48 @@ router.post("/compras/eliminar", function(req, res) {
            }
             
             arrayCesta.splice(indice,1)
-            longitud = arrayCesta.length
-            console.log(longitud,"hola")
-            for (let i = 0; i < longitud; i++) {
-                db.collection("usuarios").updateOne({mail:mail},{$pop:{cesta:-1}}),function(err,datos) {
-                    if (err !== null) {
-                        console.log(err)
-                        res.send({mensaje: "Error: " + err})
-                    } else {
-                       /*  */ console.log(arrayCesta)
-                        for (let z = 0; i < arrayCesta.length; z++) {
-                            db.collection("usuarios").updateOne({ mail: mail}, { $push: { cesta: { $each: [{ titulo: arrayCesta[z].titulo, cesta:"cesta",cartel: arrayCesta[z].cartel, id: arrayCesta[z].id,precio:arrayCesta[z].precio,producto:arrayCesta[z].producto, cantidad:arrayCesta[z].cantidad}], $position: 0 } } }, function(err, datos) {
-                                if (err !== null) {
-                                    console.log(err)
-                                    res.send({ mensaje: "Error:" + err })
-                                } else {
-                                    db.collection("usuarios").find({mail: mail}).toArray(function(err, datos) {
-                                        if (err !== null) {
-                                            res.send({ mensaje: "Ha habido un error" });
-                                        } else {
-                                            res.send({mensaje: "Articulo eliminado de la lista",datos:datos})
-                                        }
-                                    })
-                                   
-                                    
-                                }
-                            })
-                        }
+            
+            db.collection("usuarios").updateOne({ mail: mail }, { $set: { cesta: [] } }, function(err, datos) {
+                if (err !== null) {
+                    console.log(err)
+                    res.send({ mensaje: "Error:" + err })
+                } else {
+                    
+                    for (let i = 0; i < arrayCesta.length; i++) {
+                        console.log("1")
+                        db.collection("usuarios").updateOne({ mail: mail}, { $push: { cesta: { $each: [{ titulo: arrayCesta[i].titulo, cesta: arrayCesta[i].cesta,cartel: arrayCesta[i].cartel, id: arrayCesta[i].id,precio:arrayCesta[i].precio,producto:arrayCesta[i].producto, cantidad:arrayCesta[i].cantidad}], $position: 0 } } }, function(err, datos) {
+                            if (err !== null) {
+                                console.log(err)
+                                res.send({ mensaje: "Error:" + err })
+                            } else {
+                                
+                            }
+                        })
                     }
+
+                    db.collection("usuarios").find({mail: mail}).toArray(function(err, datos) {
+                        if (err !== null) {
+                            res.send({ mensaje: "Ha habido un error" });
+                        } else {
+                            let suma = 0
+
+                            cesta = datos[0].cesta
+           
+                            for (let i = 0; i < cesta.length; i++) {
+                            suma = suma + cesta[i].precio
+                            }
+
+                            res.send({datos:datos,total:suma})
+                        }
+                    })
+
                 }
-            } 
-                        
-                        
-                       
+            })
 
-
-                
 
         }
     });
+   
 });
 
 module.exports = router;
