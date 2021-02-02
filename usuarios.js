@@ -124,6 +124,45 @@ router.post("/favoritos", function(req, res) {
 
 })
 
+router.post("/editar", function(req, res) {
+    let db = req.app.locals.db
+
+    let nombre = req.body.nombre;
+    let apellido1 = req.body.apellido1;
+    let apellido2 = req.body.apellido2;
+    let fecha = req.body.fecha;
+    /* let anyo = parseInt(fecha.substring(0,4));
+    let mes = parseInt(fecha.substring(5,7));
+    let dia = parseInt(fecha.substring(8,10)); */
+    let mail = req.body.mail;
+    let password = req.body.password;
+
+    console.log(nombre,mail)
+
+    db.collection("usuarios").find({ mail: mail}).toArray(function(err,datos) {
+        if (err !== null) {
+            res.send({mensaje: "Error: " + err})
+        } else {
+            if (datos.length > 0) {
+                res.send({registro: "no", mensaje: "Ese mail ya ha sido utilizado"})
+            } else {
+                db.collection("usuarios").updateOne({ usuario: nombre/* , apellido1: apellido1, apellido2: apellido2, anyo: anyo, mes: mes, dia: dia */}), function(err, datos) {
+                    if (err !== null) {
+                        console.log(err)
+                        res.send({ mensaje: "Error al registrar el usuario" })
+                    } else {
+            
+                       res.send({mensaje: "Usuario editado correctamente", usuario: mail})
+            
+                    }
+                }
+            }
+        }
+    })
+
+    
+})
+
 router.post("/cesta", function(req, res) {
     let db = req.app.locals.db
 

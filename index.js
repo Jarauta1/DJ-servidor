@@ -13,6 +13,7 @@ let comics = require("./comics")
 let camisetas = require("./camisetas")
 let zapatillas = require("./zapatillas")
 let libros = require("./libros")
+let graficas = require("./graficas")
 
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
@@ -44,6 +45,7 @@ app.use("/comics", comics)
 app.use("/camisetas", camisetas)
 app.use("/zapatillas", zapatillas)
 app.use("/libros", libros)
+app.use("/graficas", graficas)
 
 app.listen(process.env.PORT || 3000);
 /* app.listen(3000); */
