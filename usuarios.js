@@ -39,7 +39,7 @@ router.post("/registro", cifrarContrasenia, function(req, res) {
                         res.send({registro: "no", mensaje: "Error al registrar el usuario" })
                     } else {
                         res.send({registro: "si", mensaje: "Usuario registrado correctamente", usuario: mail})
-            
+                        console.log("entro")
             
                     }
                 }
