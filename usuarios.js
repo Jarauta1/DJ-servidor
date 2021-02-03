@@ -37,11 +37,9 @@ router.post("/registro", cifrarContrasenia, function(req, res) {
                 db.collection("usuarios").insertOne({ usuario: nombre, apellido1: apellido1, apellido2: apellido2, anyo: anyo, mes: mes, dia: dia, mail: mail, password: password, rango: "usuario", cesta: [], favoritos: [], compras: [] }, function(err, datos) {
                     if (err !== null) {
                         console.log(err)
-                        console.log("error",datos)
                         res.send({registro: "no", mensaje: "Error al registrar el usuario" })
                     } else {
                         res.send({registro: "si", mensaje: "Usuario registrado correctamente", usuario: mail})
-                        console.log(datos,"entro")
                     }
                 });
             }
