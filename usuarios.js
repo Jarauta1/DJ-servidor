@@ -63,7 +63,8 @@ router.post("/login", function(req, res) {
 
             if (arrayUsuario.length > 0) {
                 if (bcrypt.compareSync(password, arrayUsuario[0].password)) {
-                    res.send({ entrar: "si", mensaje: "Logueado correctamente", usuario: mail });
+                    console.log(arrayUsuario)
+                    res.send({ entrar: "si", mensaje: "Logueado correctamente", usuario: mail, dia: arrayUsuario[0].dia, mes:arrayUsuario[0].mes,anyo:arrayUsuario[0].anyo,apellido1:arrayUsuario[0].apellido1,apellido2:arrayUsuario[0].apellido2 });
                 } else {
                     res.send({ entrar: "no", mensaje: "Contraseña incorrecta" });
                 }
