@@ -36,10 +36,10 @@ router.post("/registro", cifrarContrasenia, function(req, res) {
                 db.collection("usuarios").insertOne({ usuario: nombre, apellido1: apellido1, apellido2: apellido2, anyo: anyo, mes: mes, dia: dia, mail: mail, password: password, rango: "usuario", cesta: [], favoritos: [], compras: [] }), function(err, datos) {
                     if (err !== null) {
                         console.log(err)
-                        res.send({ mensaje: "Error al registrar el usuario" })
+                        res.send({registro: "no", mensaje: "Error al registrar el usuario" })
                     } else {
+                        res.send({registro: "si", mensaje: "Usuario registrado correctamente", usuario: mail})
             
-                       res.send({mensaje: "Usuario registrado correctamente", usuario: mail})
             
                     }
                 }
@@ -143,10 +143,12 @@ router.post("/editar", function(req, res) {
         if (err !== null) {
             res.send({mensaje: "Error: " + err})
         } else {
-            if (datos.length > 0) {
+            console.log(datos, datos.length)
+            if (datos.length == 0) {
                 res.send({registro: "no", mensaje: "Ese mail ya ha sido utilizado"})
             } else {
-                db.collection("usuarios").updateOne({ usuario: nombre/* , apellido1: apellido1, apellido2: apellido2, anyo: anyo, mes: mes, dia: dia */}), function(err, datos) {
+                console.log(nombre)
+                db.collection("usuarios").updateOne({ mail:mail},{ $set: {usuario: nombre/* , apellido1: apellido1, apellido2: apellido2, anyo: anyo, mes: mes, dia: dia */}}), function(err, datos) {
                     if (err !== null) {
                         console.log(err)
                         res.send({ mensaje: "Error al registrar el usuario" })
