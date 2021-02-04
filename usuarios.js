@@ -33,7 +33,7 @@ router.post("/registro", cifrarContrasenia, function(req, res) {
             if (datos.length > 0) {
                 res.send({registro: "no", mensaje: "Ese mail ya ha sido utilizado"})
             } else {
-                console.log("no se ha usado",datos)
+              
                 db.collection("usuarios").insertOne({ usuario: nombre, apellido1: apellido1, apellido2: apellido2, anyo: anyo, mes: mes, dia: dia, mail: mail, password: password, rango: "usuario", cesta: [], favoritos: [], compras: [] }, function(err, datos) {
                     if (err !== null) {
                         console.log(err)
@@ -62,7 +62,7 @@ router.post("/login", function(req, res) {
 
             if (arrayUsuario.length > 0) {
                 if (bcrypt.compareSync(password, arrayUsuario[0].password)) {
-                    console.log(arrayUsuario)
+                   /*  console.log(arrayUsuario) */
                     res.send({ entrar: "si", mensaje: "Logueado correctamente", usuario: mail, dia: arrayUsuario[0].dia, mes:arrayUsuario[0].mes,anyo:arrayUsuario[0].anyo,apellido1:arrayUsuario[0].apellido1,apellido2:arrayUsuario[0].apellido2 });
                 } else {
                     res.send({ entrar: "no", mensaje: "Contraseña incorrecta" });
@@ -73,6 +73,38 @@ router.post("/login", function(req, res) {
         }
     });
 });
+
+router.post("/adminchange", function(req, res) {
+    let db = req.app.locals.db
+
+    let mail = req.body.mail;
+    let estado = req.body.rango;
+    console.log(mail,estado)
+
+    db.collection("usuarios").find({ mail: mail }).toArray(function(err, arrayUsuario) {
+        if (err !== null) {
+            res.send({ mensaje: "Ha habido un error" });
+        } else {
+
+            if (estado == "admin" || estado == "usuario") {
+                db.collection("usuarios").updateOne({ mail:mail},{ $set: {rango:estado}}, function(err, datos) {
+                    if (err !== null) {
+                        console.log(err)
+                        res.send({ mensaje: "Error al registrar el usuario" })
+                    } else {
+        
+                    res.send({mensaje: "Usuario editado correctamente", usuario: mail})
+        
+                    }
+                })
+            } else {
+                console.log("ey")
+            }
+            
+        }
+    });
+});
+
 
 router.post("/favoritos", function(req, res) {
     let db = req.app.locals.db
@@ -143,12 +175,12 @@ router.post("/editar", function(req, res) {
         if (err !== null) {
             res.send({mensaje: "Error: " + err})
         } else {
-            console.log(datos, datos.length)
+           /*  console.log(datos, datos.length) */
             if (datos.length == 0) {
                 res.send({registro: "no", mensaje: "Ese mail ya ha sido utilizado"})
             } else {
-                console.log(nombre)
-                db.collection("usuarios").updateOne({ mail:mail},{ $set: {usuario: nombre/* , apellido1: apellido1, apellido2: apellido2, anyo: anyo, mes: mes, dia: dia */}}), function(err, datos) {
+               /*  console.log(nombre) */
+                db.collection("usuarios").updateOne({ mail:mail},{ $set: {usuario: nombre/* , apellido1: apellido1, apellido2: apellido2 *//* , anyo: anyo, mes: mes, dia: dia */}}), function(err, datos) {
                     if (err !== null) {
                         console.log(err)
                         res.send({ mensaje: "Error al registrar el usuario" })
